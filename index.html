@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taskparalyse Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Epilogue:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #18160f;
+    --bg: #f2f0eb;
+    --warm: #e8dff5;
+    --purple: #5b2d8e;
+    --purple-dark: #4a2278;
+    --muted: #6b6658;
+    --rule: #ddd9d0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .5;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .hero-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .eyebrow {
+    font-size: .75rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #c8e832;
+    font-weight: 500;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp .6s .1s forwards;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -.02em;
+    opacity: 0;
+    animation: fadeUp .7s .25s forwards;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--purple);
+  }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+    max-width: 560px;
+    color: var(--muted);
+    line-height: 1.65;
+    opacity: 0;
+    animation: fadeUp .7s .4s forwards;
+  }
+
+  .hero-sub strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .hero-rule {
+    width: 60px;
+    height: 2px;
+    background: #c8e832;
+    margin: 2.5rem 0;
+    opacity: 0;
+    animation: fadeUp .6s .55s forwards;
+  }
+
+  .for-whom {
+    font-size: .9rem;
+    color: var(--muted);
+    letter-spacing: .04em;
+    opacity: 0;
+    animation: fadeUp .6s .65s forwards;
+  }
+
+  .for-whom span {
+    color: var(--ink);
+    font-weight: 500;
+    border-bottom: 1px solid #c8e832;
+    padding-bottom: 1px;
+  }
+
+  /* ── PAIN SECTION ── */
+  .pain {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5rem 2rem;
+    position: relative;
+  }
+
+  .pain-inner {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--purple);
+    font-weight: 500;
+    margin-bottom: 2.5rem;
+  }
+
+  .pain-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2.5rem;
+  }
+
+  .pain-headline em {
+    font-style: italic;
+    color: #c8e832;
+  }
+
+  .pain-list {
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .pain-list li {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    font-size: 1rem;
+    color: #c8bfb5;
+    line-height: 1.55;
+  }
+
+  .pain-list li::before {
+    content: '—';
+    color: #c8e832;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .pain-note {
+    font-size: .9rem;
+    color: #8a7e75;
+    border-left: 3px solid #c8e832;
+    padding-left: 1.2rem;
+    line-height: 1.6;
+  }
+
+  /* ── NOT THIS ── */
+  .not-this {
+    padding: 4rem 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .not-this-inner {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .not-this h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .not-this h2 em { font-style: italic; color: var(--purple); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  .col-no, .col-yes {
+    padding: 1.8rem;
+    border-radius: 2px;
+  }
+
+  .col-no {
+    background: #ede7de;
+    position: relative;
+  }
+
+  .col-yes {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .col-label {
+    font-size: .7rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .col-no .col-label { color: var(--muted); }
+  .col-yes .col-label { color: #c8e832; }
+
+  .col-no ul, .col-yes ul {
+    list-style: none;
+    display: grid;
+    gap: .7rem;
+  }
+
+  .col-no li, .col-yes li {
+    font-size: .9rem;
+    line-height: 1.5;
+    display: flex;
+    gap: .7rem;
+  }
+
+  .col-no li::before { content: '✕'; color: #b0a090; flex-shrink: 0; }
+  .col-yes li::before { content: '✓'; color: var(--purple); flex-shrink: 0; }
+
+  /* ── ABOUT ── */
+  .about {
+    background: #f2f0eb;
+    padding: 4.5rem 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .about-inner {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .about h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .about p {
+    color: #5a5048;
+    margin-bottom: 1rem;
+    max-width: 620px;
+    font-size: 1rem;
+  }
+
+  .about p strong { color: var(--ink); font-weight: 500; }
+
+  .handwritten {
+    font-family: 'Syne', sans-serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--purple);
+    margin-top: 1.5rem;
+    display: block;
+  }
+
+  /* ── CONTENTS ── */
+  .contents {
+    padding: 5rem 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .contents-inner {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .contents h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+  }
+
+  .parts {
+    display: grid;
+    gap: 0;
+    counter-reset: part;
+  }
+
+  .part {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1.2rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .part:last-child { border-bottom: 1px solid var(--rule); }
+
+  .part-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #c8e832;
+    line-height: 1;
+    padding-top: .1rem;
+  }
+
+  .part-body h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: .3rem;
+  }
+
+  .part-body p {
+    font-size: .88rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: 'TASKPARALYSE';
+    position: absolute;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(5rem, 18vw, 14rem);
+    font-weight: 900;
+    color: rgba(255,255,255,.03);
+    letter-spacing: -.04em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .cta-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+  }
+
+  .cta-section h2 em {
+    font-style: italic;
+    color: #c8e832;
+  }
+
+  .cta-sub {
+    color: #a09085;
+    font-size: 1rem;
+    max-width: 440px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.65;
+  }
+
+  .price-block {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .6rem;
+    margin-bottom: 2rem;
+  }
+
+  .price {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--bg);
+    line-height: 1;
+  }
+
+  .price-note {
+    font-size: .85rem;
+    color: #7a6e65;
+  }
+
+  .btn {
+    display: inline-block;
+    background: #c8e832;
+    color: #18160f;
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: .04em;
+    padding: 1.1rem 3rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+    border-radius: 1px;
+  }
+
+  .btn:hover {
+    background: #a5c020;
+    transform: translateY(-2px);
+  }
+
+  .guarantee {
+    margin-top: 1.5rem;
+    font-size: .8rem;
+    color: rgba(255,255,255,.4);
+    letter-spacing: .04em;
+  }
+
+  /* ── FAQ ── */
+  .faq {
+    padding: 5rem 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .faq-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .faq h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+  }
+
+  .faq-item {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .faq-item:last-child { border-bottom: 1px solid var(--rule); }
+
+  .faq-q {
+    font-weight: 500;
+    margin-bottom: .6rem;
+    font-size: .95rem;
+  }
+
+  .faq-a {
+    font-size: .9rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .faq-a strong { color: var(--ink); font-weight: 500; }
+
+  /* ── FINAL CTA ── */
+  .final-cta {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: #f2f0eb;
+  }
+
+  .final-cta h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .final-cta h2 em { font-style: italic; color: var(--purple); }
+
+  .final-cta p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+    font-size: .95rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem;
+    text-align: center;
+    font-size: .75rem;
+    color: var(--rule);
+    border-top: 1px solid var(--rule);
+    letter-spacing: .08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Für Menschen mit A(U)DHS</p>
+    <h1>Du weißt was<br>du tun musst.<br><em>Und tust es nicht.</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">
+      Taskparalyse ist kein Willensversagen.<br>
+      Es ist ein <strong>neurologisches Muster</strong> — und es hat konkrete Wege raus.<br>
+      Dieser Guide zeigt dir welche.
+    </p>
+    <p class="for-whom" style="margin-top:2rem;">
+      Für dich, wenn du <span>ADHS oder Autismus</span> hast —<br>
+      oder einfach weißt, dass dein Gehirn anders tickt.
+    </p>
+  </div>
+</section>
+
+<!-- ── PAIN ── -->
+<section class="pain">
+  <div class="pain-inner">
+    <p class="section-label">Das kennst du</p>
+    <h2 class="pain-headline">Du stehst vor der Aufgabe.<br>Du kannst nicht <em>anfangen.</em><br>Obwohl du willst.</h2>
+    <ul class="pain-list">
+      <li>Die To-do-Liste wird länger. Du schaust sie an und machst gar nichts.</li>
+      <li>Du weißt, was du tun müsstest — und trotzdem passiert nichts.</li>
+      <li>Der innere Druck wächst, aber der Druck hilft nicht. Er macht es schlimmer.</li>
+      <li>Andere schütteln den Kopf. Du schüttelst ihn selbst.</li>
+      <li>Am Abend fragst du dich, wo der Tag geblieben ist.</li>
+    </ul>
+    <p class="pain-note">Das ist keine Faulheit. Das ist Taskparalyse — und sie ist bei ADHS & Autismus besonders ausgeprägt, weil das Gehirn anders mit Anforderungen umgeht.</p>
+  </div>
+</section>
+
+<!-- ── NOT THIS ── -->
+<section class="not-this">
+  <div class="not-this-inner">
+    <p class="section-label reveal">Was dieser Guide ist — und was nicht</p>
+    <h2 class="reveal">Kein <em>„Einfach anfangen!"</em>-Ratschlag.</h2>
+    <div class="two-col">
+      <div class="col-no">
+        <p class="col-label">Nicht das hier</p>
+        <ul>
+          <li>Allgemeine Produktivitäts-Tipps</li>
+          <li>KI-generierte Textblöcke</li>
+          <li>Theoretisches Fachwissen ohne Praxis</li>
+          <li>Ratschläge die für „normale" Gehirne gemacht sind</li>
+          <li>Motivationssprüche</li>
+        </ul>
+      </div>
+      <div class="col-yes">
+        <p class="col-label">Sondern das</p>
+        <ul>
+          <li>Wochenlange eigene Erfahrung & Forschung</li>
+          <li>12 konkrete Wege aus der Paralyse</li>
+          <li>Dein persönliches Paralyse-Profil</li>
+          <li>Ein Notfallplan, den du selbst baust</li>
+          <li>Eine Notfallkarte für den Moment wenn nichts geht</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about">
+  <div class="about-inner">
+    <p class="section-label reveal">Wer steckt dahinter</p>
+    <h2 class="reveal">Ich habe diesen Guide nicht mal eben zusammengeschrieben.</h2>
+    <p class="reveal">Ich kenne Taskparalyse von innen. Ich habe wochenlang daran gearbeitet, alles was ich erlebt, ausprobiert und verstanden habe in etwas Handhabbares zu packen.</p>
+    <p class="reveal"><strong>Kein KI-Text. Keine Hochglanz-Theorie.</strong> Nur das, was mir und anderen tatsächlich geholfen hat — strukturiert aufbereitet, damit du nicht nochmal von vorne anfangen musst.</p>
+    <p class="reveal">Ich verkaufe nichts, hinter dem ich nicht selbst stehe. Das hier ist kein Produkt von der Stange. Es ist etwas, das ich mir damals selbst gewünscht hätte.</p>
+    <span class="handwritten reveal">— Aus eigener Erfahrung. Ehrlich.</span>
+  </div>
+</section>
+
+<!-- ── CONTENTS ── -->
+<section class="contents">
+  <div class="contents-inner">
+    <p class="section-label reveal">Was dich erwartet</p>
+    <h2 class="reveal">5 Teile. Ein roter Faden.</h2>
+    <div class="parts">
+      <div class="part reveal">
+        <span class="part-num">1</span>
+        <div class="part-body">
+          <h3>Verstehen</h3>
+          <p>Was Taskparalyse wirklich ist — warum sie bei A(U)DHS so heftig trifft, und warum Willenskraft das falsche Werkzeug ist.</p>
+        </div>
+      </div>
+      <div class="part reveal">
+        <span class="part-num">2</span>
+        <div class="part-body">
+          <h3>12 Wege raus</h3>
+          <p>Konkrete, erprobte Strategien. Unterschiedlich — weil nicht jede Methode bei jedem funktioniert. Du findest deine.</p>
+        </div>
+      </div>
+      <div class="part reveal">
+        <span class="part-num">3</span>
+        <div class="part-body">
+          <h3>Dein Profil erkennen</h3>
+          <p>Taskparalyse hat verschiedene Gesichter. Hier erkennst du, welches Muster bei dir dominiert — das ist der Schlüssel zur richtigen Strategie.</p>
+        </div>
+      </div>
+      <div class="part reveal">
+        <span class="part-num">4</span>
+        <div class="part-body">
+          <h3>Persönlichen Notfallplan bauen</h3>
+          <p>Du baust dir deinen eigenen Plan — passend zu deinem Profil, deinem Alltag, deinen Auslösern.</p>
+        </div>
+      </div>
+      <div class="part reveal">
+        <span class="part-num">5</span>
+        <div class="part-body">
+          <h3>Kompakte Notfallkarte</h3>
+          <p>Für den Moment, wenn nichts geht. Kompakt, greifbar, sofort nutzbar — ohne dass du erst nachdenken musst.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <p class="section-label" style="color:var(--purple);">Jetzt holen</p>
+    <h2>Hör auf zu warten,<br>dass es <em>von selbst</em> besser wird.</h2>
+    <p class="cta-sub">Der Guide ist sofort verfügbar. Kein Abo, kein Kurs, keine Wartezeit. Einmal kaufen — für immer nutzbar.</p>
+    <div class="price-block">
+      <span class="price">24€</span>
+      <span class="price-note">einmalig · sofort download</span>
+    </div>
+    <br>
+    <a href="https://neurodiversleben.gumroad.com/l/bvupx" target="_blank" target="_blank" class="btn">Jetzt kaufen →</a>
+    <p class="guarantee">Kein Risiko — wenn der Guide nichts für dich ist, meld dich. Punkt.</p>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq">
+  <div class="faq-inner">
+    <h2 class="reveal">Häufige Fragen</h2>
+
+    <div class="faq-item reveal">
+      <p class="faq-q">Ich bin nicht offiziell diagnostiziert — ist der Guide trotzdem für mich?</p>
+      <p class="faq-a">Ja. Wenn du dich in dem erkennst was oben steht — die Paralyse, das Wissen-ohne-Tun — dann ist das relevant für dich. Eine Diagnose ist keine Voraussetzung.</p>
+    </div>
+
+    <div class="faq-item reveal">
+      <p class="faq-q">Ist das wirklich kein KI-Text?</p>
+      <p class="faq-a"><strong>Nein.</strong> Ich habe wochenlang daran gearbeitet. Eigene Erfahrungen, eigene Sprache, eigene Struktur. Das merkst du beim Lesen.</p>
+    </div>
+
+    <div class="faq-item reveal">
+      <p class="faq-q">Was wenn der Guide nichts für mich ist?</p>
+      <p class="faq-a">Dann meld dich einfach. Ich verkaufe nichts, hinter dem ich nicht stehe — und ich schwatze niemandem etwas auf, was ihnen nicht hilft.</p>
+    </div>
+
+    <div class="faq-item reveal">
+      <p class="faq-q">Wie bekomme ich den Guide?</p>
+      <p class="faq-a">Direkt nach dem Kauf per Download. Kein Warten, kein Login, kein Abo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="final-cta">
+  <h2 class="reveal">Du kennst das Gefühl.<br>Jetzt gibt es <em>einen Weg raus.</em></h2>
+  <p class="reveal">Einmal kaufen. Sofort lesen. Sofort anwenden.</p>
+  <a href="https://neurodiversleben.gumroad.com/l/bvupx" target="_blank" target="_blank" class="btn">Taskparalyse Guide — 24€ →</a>
+</section>
+
+<footer>
+  © 2026 · Taskparalyse Guide · Alle Rechte vorbehalten
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
